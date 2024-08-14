@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Board from "./_components/Board";
+import { EMPTY } from "./_util/Constants";
 
 export default function Home() {
   const [board, setBoard] = useState(() => {
@@ -14,7 +15,7 @@ export default function Home() {
       const newBoard = prevBoard.map((row) => row.slice());
       const prevValue = newBoard[row][col];
       let newValue = prevValue + 1;
-      if (newValue === 10) newValue = 0;
+      if (newValue === board.length + 1) newValue = EMPTY;
       newBoard[row][col] = newValue;
       return newBoard;
     });
