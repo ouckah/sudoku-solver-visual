@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Board from "./_components/Board";
 import SudokuSolver from "./_util/Solver";
+import { EMPTY } from "./_util/Constants";
 
 export default function Home() {
   const [board, setBoard] = useState(() =>
@@ -13,13 +14,48 @@ export default function Home() {
     col: number;
   } | null>(null);
 
+  // key listener for input to board
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (selectedCell) {
+        const key = event.key;
+
+        // number input
+        if (key >= "1" && key <= "9") {
+          const num = parseInt(key);
+
+          // update board
+          setBoard((prevBoard) => {
+            const newBoard = prevBoard.map((r) => [...r]);
+            newBoard[selectedCell.row][selectedCell.col] = num;
+            return newBoard;
+          });
+        }
+
+        // delete input
+        else if (key === "0" || key === "Backspace" || key === "Delete") {
+          // update board
+          setBoard((prevBoard) => {
+            const newBoard = prevBoard.map((r) => [...r]);
+            newBoard[selectedCell.row][selectedCell.col] = EMPTY;
+            return newBoard;
+          });
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [selectedCell]);
+
   const handleBoardUpdate = (newBoard: number[][]) => {
     setBoard(newBoard.map((row) => [...row]));
   };
 
   const handleBoardClick = (row: number, col: number) => {
     setSelectedCell({ row, col });
-    console.log(`Selected Cell: (${row}, ${col})`);
   };
 
   const solveSudoku = async () => {
