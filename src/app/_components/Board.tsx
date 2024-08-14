@@ -1,12 +1,6 @@
 import React from "react";
 import Cell from "./Cell";
-const Board = ({
-  board,
-  changeNumber,
-}: {
-  board: number[][];
-  changeNumber: (row: number, col: number) => void;
-}) => {
+const Board = ({ board }: { board: number[][] }) => {
   return (
     <div className="grid grid-cols-9 gap-0 border-white border-4">
       {board.map((row, rowIndex) =>
@@ -16,7 +10,6 @@ const Board = ({
             row={rowIndex}
             col={colIndex}
             value={value}
-            changeNumber={changeNumber}
           />
         ))
       )}

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Board from "./_components/Board";
-import { EMPTY } from "./_util/Constants";
+import SudokuSolver from "./_util/Solver";
 
 export default function Home() {
   const [board, setBoard] = useState(() => {
@@ -10,21 +10,27 @@ export default function Home() {
     return initialBoard;
   });
 
-  const changeNumber = (row: number, col: number) => {
-    setBoard((prevBoard) => {
-      const newBoard = prevBoard.map((row) => row.slice());
-      const prevValue = newBoard[row][col];
-      let newValue = prevValue + 1;
-      if (newValue === board.length + 1) newValue = EMPTY;
-      newBoard[row][col] = newValue;
-      return newBoard;
-    });
+  const handleBoardUpdate = (newBoard: number[][]) => {
+    setBoard(newBoard.map((row) => [...row]));
+  };
+
+  const solveSudoku = async () => {
+    console.log("Solving...");
+    const solver = new SudokuSolver(board, handleBoardUpdate, 100);
+    if (await solver.solve()) {
+      console.log("Solved board:", solver.getBoard());
+    } else {
+      alert("No solution exists.");
+    }
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <Board board={board} changeNumber={changeNumber} />
+      <div className="flex flex-col z-10 w-full max-w-5xl items-center justify-between gap-5 font-mono text-sm lg:flex">
+        <Board board={board} />
+        <button className="p-5 bg-gray-700" onClick={solveSudoku}>
+          <h1>Solve</h1>
+        </button>
       </div>
     </main>
   );
